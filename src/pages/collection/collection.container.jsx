@@ -1,6 +1,5 @@
 import React from "react";
-import {Query} from 'react-apollo';
-import {gql} from 'apollo-boost';
+import {gql, useQuery} from '@apollo/client';
 
 import CollectionPage from "./collection.component";
 import Spinner from "../../components/spinner/spinner.component";
@@ -21,17 +20,15 @@ const GET_COLLECTION_BY_TITLE = gql`
 `;
 
 const CollectionContainer = ({match}) => {
-    return (
-        <Query query={GET_COLLECTION_BY_TITLE} variables={{title: match.params.collectionId}}>
-            {
-                ({loading, data}) => {
-                    if(loading) return <Spinner/>
+    const {data, loading} = useQuery(GET_COLLECTION_BY_TITLE, {
+        variables: {
+            title: match.params.collectionId
+        }
+    });
 
-                    return <CollectionPage collection={data.getCollectionsByTitle} />
-                }
-            }
-        </Query>
-    )
+    if (loading) return <Spinner/>
+
+    return <CollectionPage collection={data.getCollectionsByTitle}/>
 }
 
 export default CollectionContainer;
